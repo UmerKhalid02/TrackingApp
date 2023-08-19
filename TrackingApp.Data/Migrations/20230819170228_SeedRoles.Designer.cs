@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrackingApp.Data;
 
@@ -11,9 +12,10 @@ using TrackingApp.Data;
 namespace TrackingApp.Data.Migrations
 {
     [DbContext(typeof(EFDataContext))]
-    partial class EFDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230819170228_SeedRoles")]
+    partial class SeedRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,16 +121,6 @@ namespace TrackingApp.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("User", "trk");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ef12ee01-adcf-4a8a-8544-03a592d9e252"),
-                            CreatedAt = new DateTime(2023, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Password = "$admin1234*",
-                            UserName = "admin"
-                        });
                 });
 #pragma warning restore 612, 618
         }

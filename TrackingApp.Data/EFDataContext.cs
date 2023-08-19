@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrackingApp.Data.Entities.AuthenticationEntity;
 using TrackingApp.Data.Entities.UserEntity;
+using TrackingApp.Data.Seeders;
 
 namespace TrackingApp.Data
 {
@@ -14,6 +15,9 @@ namespace TrackingApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("trk");
+
+            modelBuilder.SeedRoles();
+            modelBuilder.SeedAdminUser();
         }
     }
 }
