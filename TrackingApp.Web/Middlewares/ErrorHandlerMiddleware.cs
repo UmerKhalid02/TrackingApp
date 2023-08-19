@@ -64,9 +64,9 @@ namespace TrackingApp.Web.Middlewares
                     case KeyNotFoundException e:
                         response.StatusCode = (int)HttpStatusCode.NotFound;
                         break;
-                    /*case BadRequestException e:
+                    case BadRequestException e:
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        break;*/
+                        break;
                     default:
                         if (error?.Message.ToLower().Contains("No authenticationScheme was specified".ToLower()) == true)
                         {
