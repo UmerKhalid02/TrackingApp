@@ -32,7 +32,16 @@ namespace TrackingApp.Web.Modules.Users
             return Ok(await _userService.AddUser(request));
         }
 
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequestDTO request, Guid userId)
+        {
+            return Ok(await _userService.UpdateUser(request, userId));
+        }
 
-
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser(Guid userId)
+        {
+            return Ok(await _userService.DeleteUser(userId));
+        }
     }
 }

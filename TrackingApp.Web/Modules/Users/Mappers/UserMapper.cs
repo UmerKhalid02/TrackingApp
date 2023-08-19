@@ -10,6 +10,7 @@ namespace TrackingApp.Web.Modules.Users.Mappers
         {
             AddUserMapper();
             UserDetailsMapper();
+            UpdateUserMapper();
         }
 
         private void AddUserMapper()
@@ -20,6 +21,11 @@ namespace TrackingApp.Web.Modules.Users.Mappers
         private void UserDetailsMapper()
         {
             CreateMap<User, UserResponseDTO>().ReverseMap();
+        }
+
+        private void UpdateUserMapper()
+        {
+            CreateMap<User, UpdateUserRequestDTO>().ReverseMap();
         }
     }
 }

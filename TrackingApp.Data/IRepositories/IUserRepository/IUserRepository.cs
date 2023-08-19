@@ -7,6 +7,7 @@ namespace TrackingApp.Data.IRepositories.IUserRepository
         Task<List<User>> GetAllUsers();
         Task<User> GetUserById(Guid userId);
         Task<User> AddUser(User user);
+        User UpdateUser(User user);
         Task SaveChanges();
     }
 }

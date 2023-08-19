@@ -13,5 +13,8 @@
         public const string RecordFetched = "Record has been fetched successfully";
         public const string RecordNotFetched = "Record not fetched successfully";
         public const string RecordNotFound = "Record not found";
+        
+        
+        public const string UserNotFound = "User not found";
     }
 }

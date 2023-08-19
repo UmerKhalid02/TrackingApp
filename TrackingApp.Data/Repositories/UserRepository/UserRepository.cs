@@ -24,6 +24,12 @@ namespace TrackingApp.Data.Repositories.UserRepository
             return user;
         }
 
+        public User UpdateUser(User user)
+        {
+            _context.User.Update(user);
+            return user;
+        }
+
         public async Task SaveChanges()
         {
             await _context.SaveChangesAsync();

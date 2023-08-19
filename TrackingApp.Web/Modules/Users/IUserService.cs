@@ -10,5 +10,7 @@ namespace TrackingApp.Web.Modules.Users
         Task<Response<PaginationResponseModel>> GetAllUsers(UserPageParamter request);
         Task<Response<UserResponseDTO>> GetUserById(Guid userId);
         Task<Response<UserResponseDTO>> AddUser(AddUserRequestDTO request);
+        Task<Response<UserResponseDTO>> UpdateUser(UpdateUserRequestDTO request, Guid userId);
+        Task<Response<bool>> DeleteUser(Guid userId);
     }
 }

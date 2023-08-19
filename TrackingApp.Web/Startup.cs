@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using TrackingApp.Application;
+using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Data;
 using TrackingApp.Web.Extensions;
+using TrackingApp.Web.Middlewares;
 
 namespace TrackingApp.Web
 {
@@ -19,7 +20,7 @@ namespace TrackingApp.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationLayer();
-            
+            services.AddSingleton<NLogTrack, NLogTrack>();
 
             services.AddControllers(options => options.EnableEndpointRouting = false);
             services.AddControllers();
@@ -52,6 +53,7 @@ namespace TrackingApp.Web
                  .AllowAnyHeader()
                  .AllowCredentials());
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
