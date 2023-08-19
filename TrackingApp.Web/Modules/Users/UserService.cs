@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MediatR;
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Enums;
@@ -8,6 +7,7 @@ using TrackingApp.Application.Parameters;
 using TrackingApp.Application.Wrappers;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IUserRepository;
+using BC = BCrypt.Net.BCrypt;
 
 namespace TrackingApp.Web.Modules.Users
 {
@@ -85,6 +85,10 @@ namespace TrackingApp.Web.Modules.Users
             newUser.IsActive = true;
             newUser.CreatedAt = DateTime.Now;
 
+            // encrypt password
+            string salt = BC.GenerateSalt();
+            newUser.Password = BC.HashPassword(newUser.Password, salt);
+
             await _userRepository.AddUser(newUser);
             await _userRepository.SaveChanges();
 
@@ -99,6 +103,10 @@ namespace TrackingApp.Web.Modules.Users
 
             var updatedUser = _mapper.Map(request, user);
             updatedUser.UpdatedAt = DateTime.Now;
+            
+            // encrypt password
+            string salt = BC.GenerateSalt();
+            updatedUser.Password = BC.HashPassword(updatedUser.Password, salt);
 
             await _userRepository.SaveChanges();
 

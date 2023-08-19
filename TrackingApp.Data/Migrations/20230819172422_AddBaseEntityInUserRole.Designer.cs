@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrackingApp.Data;
 
@@ -11,9 +12,10 @@ using TrackingApp.Data;
 namespace TrackingApp.Data.Migrations
 {
     [DbContext(typeof(EFDataContext))]
-    partial class EFDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230819172422_AddBaseEntityInUserRole")]
+    partial class AddBaseEntityInUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,7 +128,7 @@ namespace TrackingApp.Data.Migrations
                             UserId = new Guid("ef12ee01-adcf-4a8a-8544-03a592d9e252"),
                             CreatedAt = new DateTime(2023, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = true,
-                            Password = "$2a$12$SHURSR0Suafcx5bKkUePQO7ka7IQ3wfBQkrH.xtnrRY8mnu9bgMb6",
+                            Password = "$admin1234*",
                             UserName = "admin"
                         });
                 });
@@ -159,20 +161,9 @@ namespace TrackingApp.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserRole", "trk");
-
-                    b.HasData(
-                        new
-                        {
-                            UserRoleId = new Guid("70cdb88c-ca74-48e0-a597-162479301c9e"),
-                            CreatedAt = new DateTime(2023, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            RoleId = new Guid("35dc76b5-8de7-4eb3-a29c-9a05686a6f89"),
-                            UserId = new Guid("ef12ee01-adcf-4a8a-8544-03a592d9e252")
-                        });
                 });
 
             modelBuilder.Entity("TrackingApp.Data.Entities.UserEntity.UserRole", b =>
@@ -184,20 +175,14 @@ namespace TrackingApp.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("TrackingApp.Data.Entities.UserEntity.User", "User")
-                        .WithOne("UserRole")
-                        .HasForeignKey("TrackingApp.Data.Entities.UserEntity.UserRole", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TrackingApp.Data.Entities.UserEntity.User", b =>
-                {
-                    b.Navigation("UserRole")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
