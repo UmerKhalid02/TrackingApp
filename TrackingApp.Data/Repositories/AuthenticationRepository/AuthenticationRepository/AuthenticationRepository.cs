@@ -8,9 +8,11 @@ using TrackingApp.Application.Constants;
 using TrackingApp.Application.DataTransferObjects.AuthenticationDTO.Authentication;
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.Enums;
+using TrackingApp.Application.Exceptions;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IAuthenticationRepository.IAuthenticationRepository;
 using BC = BCrypt.Net.BCrypt;
+using FluentValidation.Results;
 
 namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationRepository
 {
@@ -42,7 +44,7 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
             string refreshToken = await newRefreshToken;
-            //await SaveRefreshToken("", refreshToken, user.UserId, "", model);
+            await SaveRefreshToken("", refreshToken, user.UserId, "", model);
 
             return new LoginResponseDTO()
             {
@@ -81,6 +83,68 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
             };
 
             return tokenDescriptor;
+        }
+
+        public async Task<bool> SaveRefreshToken(string OldRefreshToken, string RefreshToken, Guid userId, string macAddress, LoginModel loginObj)
+        {
+            UserLogin? userLogin = await context.UserLogin.Where(m => m.RefreshToken == OldRefreshToken && m.UserId == userId).FirstOrDefaultAsync();
+            if (userLogin != null)
+            {
+                userLogin.UserId = userId;
+                userLogin.RefreshToken = RefreshToken;
+                userLogin.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(25);
+                userLogin.Status = "active";
+                userLogin.RefreshTokenCreatedAt = DateTime.Now;
+                userLogin.RefreshTokenUpdatedAt = DateTime.Now;
+            }
+            else
+            {
+                UserLogin obj = new()
+                {
+                    LogOutAt = DateTime.Now,
+                    UserId = userId,
+                    RefreshToken = RefreshToken,
+                    RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(25),
+                    RefreshTokenUpdatedAt = DateTime.Now,
+                    RefreshTokenCreatedAt = DateTime.Now,
+                    Status = "active"
+                };
+                await context.UserLogin.AddAsync(obj);
+            }
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> Logout(LogoutRequestModel model)
+        {
+            try
+            {
+                IList<FluentValidation.Results.ValidationFailure> errorMessages = new List<FluentValidation.Results.ValidationFailure>();
+                UserLogin userSession = await context.UserLogin.Where(m => m.UserId == model.UserId).FirstOrDefaultAsync();
+                if (userSession != null)
+                {
+                    userSession.LogOutAt = DateTime.UtcNow;
+                    userSession.Status = "inactive";
+                    userSession.IsActive = false;
+                    userSession.RefreshTokenExpiryTime = DateTime.UtcNow;
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+
+                errorMessages.Add(new FluentValidation.Results.ValidationFailure("EmployeeId", "Incorrect EmployeeId please check!"));
+                errorMessages.Add(new FluentValidation.Results.ValidationFailure("Token", "Incorrect token please check!"));
+                ErrorModel error = new()
+                {
+                    latestError = "Incorrect token please check!"
+                };
+
+                if (errorMessages.Count > 0) throw new ValidationException(errorMessages);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex.Message);
+            }
         }
     }
 }

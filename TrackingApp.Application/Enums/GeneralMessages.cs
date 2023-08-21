@@ -24,5 +24,8 @@
         public const string UserLoggedInSuccessMessage = "Logged in Successfully.";
         public const string UserLoggedInFailMessage = "Logged in fail.";
         public const string UserLoggedInFailPassword = "Incorrect password.";
+        public const string UserLogoutSuccessMessage = "Logged out Successfully.";
+        public const string UserLogoutFailMessage = "Logged out fail.";
+        public const string InvalidToken = "Invalid access token";
     }
 }

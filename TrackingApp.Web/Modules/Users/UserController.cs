@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Parameters;
+using TrackingApp.Web.Modules.Common;
 
 namespace TrackingApp.Web.Modules.Users
 {
     [ApiController]
     [Route("api/v1/users")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
@@ -14,6 +16,7 @@ namespace TrackingApp.Web.Modules.Users
             _userService = userService;
         }
 
+        [Authorize(Roles = "AD")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserPageParamter request)
         {

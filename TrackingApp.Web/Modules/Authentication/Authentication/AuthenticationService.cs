@@ -57,5 +57,20 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
             httpContext.HttpContext.Response.Cookies.Append(AuthCookiesValue.AuthKey, authToken, option);
             return true;
         }
+
+        public async Task<Response<bool>> LogoutService(LogoutRequestModel model)
+        {
+            dynamic result = await _authenticationRepository.Logout(model);
+            if (result)
+            {
+                nlogTrack.LogAccess("Logout Successfull");
+                return new Response<bool>(true, true, GeneralMessages.UserLogoutSuccessMessage);
+            }
+            else
+            {
+                nlogTrack.LogAccess("Logout Failed");
+                return new Response<bool>(false, false, GeneralMessages.UserLogoutFailMessage);
+            }
+        }
     }
 }
