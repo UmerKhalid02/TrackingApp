@@ -26,8 +26,4 @@
     <ProjectReference Include="..\TrackingApp.Data\TrackingApp.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\Authentication\" />
-  </ItemGroup>
-
 </Project>

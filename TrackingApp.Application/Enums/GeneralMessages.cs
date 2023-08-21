@@ -16,5 +16,13 @@
         
         
         public const string UserNotFound = "User not found";
+        public const string UserWithUsernameExists = "User with this username already exists";
+        public const string UserWithEmailExists = "User with this email already exists";
+
+        public const string InvalidCredentials = "Invalid Credentials";
+        public const string TokenIssue = "Something went wrong with token...";
+        public const string UserLoggedInSuccessMessage = "Logged in Successfully.";
+        public const string UserLoggedInFailMessage = "Logged in fail.";
+        public const string UserLoggedInFailPassword = "Incorrect password.";
     }
 }

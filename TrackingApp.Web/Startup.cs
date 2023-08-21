@@ -26,6 +26,16 @@ namespace TrackingApp.Web
             services.AddControllers();
             services.AddSwaggerGen();
 
+
+            //This is Settings for the JWT Secret Key
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = System.Text.Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            services.AddJwtTokenAuthentication(Configuration, key);
+            services.AddHttpContextAccessor();
+
             // For Entity Framework  
             services.AddDbContext<EFDataContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ConnectionStringMssql")));
@@ -53,6 +63,7 @@ namespace TrackingApp.Web
                  .AllowAnyHeader()
                  .AllowCredentials());
 
+            app.UseMiddleware<AuthorizationMiddleware>();
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();

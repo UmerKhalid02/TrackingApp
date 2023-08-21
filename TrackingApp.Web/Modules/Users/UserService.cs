@@ -96,8 +96,17 @@ namespace TrackingApp.Web.Modules.Users
             }
 
             var newUser = _mapper.Map<User>(request);
+            newUser.UserId = Guid.NewGuid();
             newUser.IsActive = true;
             newUser.CreatedAt = DateTime.Now;
+
+            newUser.UserRole = new UserRole
+            {
+                RoleId = RolesKey.UserRoleId,
+                UserId = newUser.UserId,
+                CreatedAt = DateTime.Now,
+                IsActive = true
+            };
 
             // encrypt password
             string salt = BC.GenerateSalt();
