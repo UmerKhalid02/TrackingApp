@@ -63,6 +63,7 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
             dynamic result = await _authenticationRepository.Logout(model);
             if (result)
             {
+                httpContext.HttpContext.Response.Cookies.Delete(AuthCookiesValue.AuthKey);
                 nlogTrack.LogAccess("Logout Successfull");
                 return new Response<bool>(true, true, GeneralMessages.UserLogoutSuccessMessage);
             }
