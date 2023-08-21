@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using NLog;
+﻿using NLog;
 using TrackingApp.Application.DataTransferObjects.AuthenticationDTO.Authentication;
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.Enums;
