@@ -2,6 +2,7 @@
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Enums;
+using TrackingApp.Application.Exceptions;
 using TrackingApp.Application.Extensions;
 using TrackingApp.Application.Parameters;
 using TrackingApp.Application.Wrappers;
@@ -81,6 +82,19 @@ namespace TrackingApp.Web.Modules.Users
 
         public async Task<Response<UserResponseDTO>> AddUser(AddUserRequestDTO request)
         {
+            // Check if user with this username already exists
+            var username = await _userRepository.UserWithUsernameExists(request.UserName);
+            if(username)
+                throw new ConflictException(GeneralMessages.UserWithUsernameExists);
+
+            // Check if user with this email already exists
+            if (!string.IsNullOrEmpty(request.Email)) {
+                var email = await _userRepository.UserWithEmailExists(request.Email);
+                
+                if (email)
+                    throw new ConflictException(GeneralMessages.UserWithEmailExists);
+            }
+
             var newUser = _mapper.Map<User>(request);
             newUser.IsActive = true;
             newUser.CreatedAt = DateTime.Now;
@@ -101,6 +115,34 @@ namespace TrackingApp.Web.Modules.Users
             if(user == null)
                 throw new KeyNotFoundException(GeneralMessages.UserNotFound);
 
+            // Check if user with this username already exists
+            if (!request.UserName.Equals(user.UserName))
+            { 
+                var username = await _userRepository.UserWithUsernameExists(request.UserName);
+                if (username)
+                    throw new ConflictException(GeneralMessages.UserWithUsernameExists);
+            }
+
+            // Check if user with this email already exists
+            if (!string.IsNullOrEmpty(request.Email))
+            {
+                if (!string.IsNullOrEmpty(user.Email) && !request.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase))
+                {
+                    var email = await _userRepository.UserWithEmailExists(request.Email);
+
+                    if (email)
+                        throw new ConflictException(GeneralMessages.UserWithEmailExists);
+                }
+                else if(string.IsNullOrEmpty(user.Email))
+                {
+                    var email = await _userRepository.UserWithEmailExists(request.Email);
+
+                    if (email)
+                        throw new ConflictException(GeneralMessages.UserWithEmailExists);
+                }
+            }
+
+
             var updatedUser = _mapper.Map(request, user);
             updatedUser.UpdatedAt = DateTime.Now;
             
@@ -120,6 +162,11 @@ namespace TrackingApp.Web.Modules.Users
             var user = await _userRepository.GetUserById(userId);
             if (user == null)
                 throw new KeyNotFoundException(GeneralMessages.UserNotFound);
+
+            // also delete user roles
+            user.UserRole.IsActive = false;
+            user.UserRole.UpdatedAt = DateTime.Now;
+            user.UserRole.DeletedAt = DateTime.Now;
 
             user.UpdatedAt = DateTime.Now;
             user.DeletedAt = DateTime.Now;

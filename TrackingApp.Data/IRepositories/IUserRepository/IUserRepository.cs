@@ -9,5 +9,7 @@ namespace TrackingApp.Data.IRepositories.IUserRepository
         Task<User> AddUser(User user);
         User UpdateUser(User user);
         Task SaveChanges();
+        Task<bool> UserWithUsernameExists(string username);
+        Task<bool> UserWithEmailExists(string email);
     }
 }

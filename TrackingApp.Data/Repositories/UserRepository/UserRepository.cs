@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TrackingApp.Application.Enums;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IUserRepository;
 
@@ -13,10 +14,10 @@ namespace TrackingApp.Data.Repositories.UserRepository
         }
 
         public async Task<List<User>> GetAllUsers() =>
-            await _context.User.Where(u => u.IsActive).ToListAsync();
+            await _context.User.Where(u => u.IsActive && u.UserRole.Role.RoleName != RolesKey.AD).ToListAsync();
 
         public async Task<User> GetUserById(Guid userId) =>
-            await _context.User.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+            await _context.User.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive && u.UserRole.Role.RoleName != RolesKey.AD);
 
         public async Task<User> AddUser(User user)
         {
@@ -34,5 +35,11 @@ namespace TrackingApp.Data.Repositories.UserRepository
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> UserWithUsernameExists(string username) =>
+            await _context.User.AnyAsync(u => u.UserName == username && u.IsActive);
+
+        public async Task<bool> UserWithEmailExists(string email) =>
+            await _context.User.AnyAsync(u => u.Email == email && u.IsActive);
     }
 }
