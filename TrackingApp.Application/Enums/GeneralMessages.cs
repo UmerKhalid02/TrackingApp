@@ -27,5 +27,8 @@
         public const string UserLogoutSuccessMessage = "Logged out Successfully.";
         public const string UserLogoutFailMessage = "Logged out fail.";
         public const string InvalidToken = "Invalid access token";
+
+        public const string RegisterUserFail = "Something went wrong while registering a new user";
+        public const string RegisterUserSuccess = "User has been registered successfully";
     }
 }

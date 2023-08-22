@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TrackingApp.Application.DataTransferObjects.AuthenticationDTO.Authentication;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Data.Entities.UserEntity;
 
@@ -16,6 +17,9 @@ namespace TrackingApp.Web.Modules.Users.Mappers
         private void AddUserMapper()
         {
             CreateMap<User, AddUserRequestDTO>().ReverseMap();
+
+            // map register request to user
+            CreateMap<AddUserRequestDTO, RegisterRequestModel>().ReverseMap();
         }
 
         private void UserDetailsMapper()

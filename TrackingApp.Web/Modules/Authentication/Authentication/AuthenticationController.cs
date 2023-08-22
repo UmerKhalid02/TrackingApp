@@ -27,6 +27,13 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
             return Ok(await service.AuthenticateService(model));
         }
 
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestModel request)
+        {
+            return Ok(await service.RegisterService(request));
+        }
+
         [Authorize(Roles = "AD, US")]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
