@@ -33,5 +33,6 @@ namespace TrackingApp.Data.Entities.OrderEntity
         public int Quantity { get; set; }
         public string? OrderTaker{ get; set; }
         public string? OrderImagePath { get; set; }
+        public string? StitchingImagePath { get; set; }
     }
 }
