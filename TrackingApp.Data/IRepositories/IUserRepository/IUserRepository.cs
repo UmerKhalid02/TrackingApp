@@ -11,5 +11,6 @@ namespace TrackingApp.Data.IRepositories.IUserRepository
         Task SaveChanges();
         Task<bool> UserWithUsernameExists(string username);
         Task<bool> UserWithEmailExists(string email);
+        Task<User> GetUserByUsername(string username);
     }
 }

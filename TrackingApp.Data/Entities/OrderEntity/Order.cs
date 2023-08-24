@@ -26,11 +26,11 @@ namespace TrackingApp.Data.Entities.OrderEntity
         [Required]
         public DateTime DeliveryDate { get; set; }
         
-        public string? OrderDetails { get; set; }
+        public string? Description { get; set; }
         [Required]
         public string? OrderStatus { get; set; }
         [Required]
-        public string? Quantity { get; set; }
+        public int Quantity { get; set; }
         public string? OrderTaker{ get; set; }
         public string? OrderImagePath { get; set; }
     }

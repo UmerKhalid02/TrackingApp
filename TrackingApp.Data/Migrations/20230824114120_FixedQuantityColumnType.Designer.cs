@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrackingApp.Data;
 
@@ -11,9 +12,10 @@ using TrackingApp.Data;
 namespace TrackingApp.Data.Migrations
 {
     [DbContext(typeof(EFDataContext))]
-    partial class EFDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230824114120_FixedQuantityColumnType")]
+    partial class FixedQuantityColumnType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,9 +90,6 @@ namespace TrackingApp.Data.Migrations
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DesignNo")
                         .HasColumnType("nvarchar(max)");
 
@@ -99,6 +98,9 @@ namespace TrackingApp.Data.Migrations
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderDetails")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrderImagePath")
                         .HasColumnType("nvarchar(max)");

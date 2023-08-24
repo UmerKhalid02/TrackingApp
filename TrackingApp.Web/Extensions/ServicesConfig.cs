@@ -4,6 +4,9 @@ using TrackingApp.Data.Repositories.UserRepository;
 using TrackingApp.Data.IRepositories.IAuthenticationRepository.IAuthenticationRepository;
 using TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationRepository;
 using TrackingApp.Web.Modules.Authentication.Authentication;
+using TrackingApp.Web.Modules.Orders;
+using TrackingApp.Data.IRepositories.IOrderRepository;
+using TrackingApp.Data.Repositories.OrderRepository;
 
 namespace TrackingApp.Web.Extensions
 {
@@ -20,6 +23,8 @@ namespace TrackingApp.Web.Extensions
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }

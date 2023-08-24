@@ -41,5 +41,8 @@ namespace TrackingApp.Data.Repositories.UserRepository
 
         public async Task<bool> UserWithEmailExists(string email) =>
             await _context.User.AnyAsync(u => u.Email == email && u.IsActive);
+
+        public async Task<User> GetUserByUsername(string username) => 
+            await _context.User.FirstOrDefaultAsync(u => u.UserName == username && u.IsActive);
     }
 }
