@@ -78,6 +78,59 @@ namespace TrackingApp.Web.Modules.Orders
             return new Response<PaginationResponseModel>(true, Response, GeneralMessages.RecordFetched);
         }
 
+        public async Task<Response<PaginationResponseModel>> GetAllCompletedOrders(OrderPageParamter request)
+        {
+            var response = await _orderRepository.GetAllCompletedOrders();
+
+            var query = response.AsQueryable();
+            if (!string.IsNullOrEmpty(request.OrderName))
+            {
+                query = query.Where(a => a.OrderName.ToLower().Contains(request.OrderName.ToLower()));
+            }
+
+            if (request.Quantity != null && request.Quantity != 0)
+            {
+                query = query.Where(a => a.Quantity == request.Quantity);
+            }
+
+            if (!string.IsNullOrEmpty(request.OrderStatus))
+            {
+                query = query.Where(a => a.OrderStatus.ToLower().Contains(request.OrderStatus.ToLower()));
+            }
+
+            request.OrderBy ??= PaginationOrder.OrderName;
+            request.OrderType ??= PaginationOrder.Descending;
+
+            if (request.PageNumber == 0 && request.PageSize == 0)
+            {
+                request.PageNumber = 1;
+                request.PageSize = query.Count();
+            }
+            else
+            {
+                request.PageNumber = request.PageNumber == 0 ? 1 : request.PageNumber;
+                request.PageSize = request.PageSize == 0 ? 10 : request.PageSize;
+            }
+
+            var responseQuery = _mapper.Map<List<OrderResponseDTO>>(query.ToList());
+
+            var result = OrderPagedList<OrderResponseDTO>.CreateAsync(responseQuery.AsQueryable(), request);
+
+            var Response = new PaginationResponseModel
+            {
+                Pagination = new Pagination
+                {
+                    CurrentPage = result.CurrentPage,
+                    PageSize = result.PageSize,
+                    TotalPages = result.TotalPages < 1 ? 1 : result.TotalPages,
+                    TotalCount = result.TotalCount,
+                },
+                Items = result.ToList(),
+            };
+
+            return new Response<PaginationResponseModel>(true, Response, GeneralMessages.RecordFetched);
+        }
+
         public async Task<Response<OrderResponseDTO>> GetActiveOrderById(int orderId)
         {
             var order = await _orderRepository.GetActiveOrderById(orderId);
@@ -139,6 +192,7 @@ namespace TrackingApp.Web.Modules.Orders
                 throw new BadRequestException(GeneralMessages.InvalidOrderStatus);
 
             order.OrderStatus = status.ToUpper();
+            order.IsActive = false;
             order.UpdatedAt = DateTime.UtcNow;
 
             await _orderRepository.SaveChanges();

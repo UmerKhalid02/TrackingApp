@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TrackingApp.Application.DataTransferObjects.OrderDTO;
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Enums;
@@ -7,6 +8,7 @@ using TrackingApp.Application.Extensions;
 using TrackingApp.Application.Parameters;
 using TrackingApp.Application.Wrappers;
 using TrackingApp.Data.Entities.UserEntity;
+using TrackingApp.Data.IRepositories.IOrderRepository;
 using TrackingApp.Data.IRepositories.IUserRepository;
 using BC = BCrypt.Net.BCrypt;
 
@@ -16,10 +18,12 @@ namespace TrackingApp.Web.Modules.Users
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        public UserService(IMapper mapper, IUserRepository userRepository)
+        private readonly IOrderRepository _orderRepository;
+        public UserService(IMapper mapper, IUserRepository userRepository, IOrderRepository orderRepository)
         {
             _mapper = mapper;
             _userRepository = userRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<Response<PaginationResponseModel>> GetAllUsers(UserPageParamter request)
@@ -183,6 +187,34 @@ namespace TrackingApp.Web.Modules.Users
 
             await _userRepository.SaveChanges();
             return new Response<bool>(true, true, GeneralMessages.RecordDeleted);
+        }
+
+        public async Task<Response<List<OrderResponseDTO>>> GetAllUserActiveOrders(Guid userId)
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+                throw new KeyNotFoundException(GeneralMessages.UserNotFound);
+
+            var orders = await _orderRepository.GetAllUserActiveOrders(userId);
+            if(orders.Count == 0)
+                return new Response<List<OrderResponseDTO>>(true, null, GeneralMessages.NoOrderPlaced);
+
+            var response = _mapper.Map<List<OrderResponseDTO>>(orders);
+            return new Response<List<OrderResponseDTO>>(true, response, GeneralMessages.RecordFetched);
+        }
+
+        public async Task<Response<OrderResponseDTO>> GetUserActiveOrderById(Guid userId, int orderId)
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+                throw new KeyNotFoundException(GeneralMessages.UserNotFound);
+
+            var order = await _orderRepository.GetUserActiveOrderById(userId, orderId);
+            if(order == null)
+                throw new KeyNotFoundException(GeneralMessages.OrderNotFound);
+
+            var response = _mapper.Map<OrderResponseDTO>(order);
+            return new Response<OrderResponseDTO>(true, response, GeneralMessages.RecordFetched);
         }
     }
 }

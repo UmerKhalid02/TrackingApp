@@ -8,6 +8,7 @@ namespace TrackingApp.Web.Modules.Orders
     public interface IOrderService
     {
         Task<Response<PaginationResponseModel>> GetAllActiveOrders(OrderPageParamter request);
+        Task<Response<PaginationResponseModel>> GetAllCompletedOrders(OrderPageParamter request);
         Task<Response<OrderResponseDTO>> GetActiveOrderById(int orderId);
         Task<Response<OrderResponseDTO>> AddOrder(AddOrderRequestDTO request);
         Task<Response<OrderResponseDTO>> UpdateOrder(int orderid, UpdateOrderRequestDTO request);

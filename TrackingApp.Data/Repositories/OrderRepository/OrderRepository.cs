@@ -16,6 +16,11 @@ namespace TrackingApp.Data.Repositories.OrderRepository
             await _context.Order.Where(x => x.IsActive == true && x.DeletedAt == null)
             .Include(x => x.User)
             .ToListAsync();
+        
+        public async Task<List<Order>> GetAllCompletedOrders() => 
+            await _context.Order.Where(x => x.IsActive == false && x.DeletedAt == null)
+            .Include(x => x.User)
+            .ToListAsync();
 
         public async Task<Order> GetActiveOrderById(int orderId) =>
             await _context.Order.Include(x => x.User).FirstOrDefaultAsync(x => x.IsActive && x.OrderId == orderId && x.DeletedAt == null);
@@ -34,5 +39,11 @@ namespace TrackingApp.Data.Repositories.OrderRepository
 
         public async Task SaveChanges() =>
             await _context.SaveChangesAsync();
+
+        public async Task<List<Order>> GetAllUserActiveOrders(Guid userId) =>
+            await _context.Order.Where(x => x.IsActive && x.UserId == userId && x.DeletedAt == null).ToListAsync();
+
+        public async Task<Order> GetUserActiveOrderById(Guid userId, int orderId) => 
+            await _context.Order.FirstOrDefaultAsync(x => x.IsActive && x.UserId == userId && x.OrderId == orderId && x.DeletedAt == null);
     }
 }

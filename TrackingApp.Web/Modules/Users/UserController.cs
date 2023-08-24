@@ -50,5 +50,21 @@ namespace TrackingApp.Web.Modules.Users
         {
             return Ok(await _userService.DeleteUser(userId));
         }
+
+
+        [Authorize(Roles = "AD, US")]
+        [HttpGet("{userId}/orders")]
+        public async Task<IActionResult> GetAllUserActiveOrders(Guid userId)
+        {
+            return Ok(await _userService.GetAllUserActiveOrders(userId));
+        }
+
+        [Authorize(Roles = "AD, US")]
+        [HttpGet("{userId}/orders/{orderId}")]
+        public async Task<IActionResult> GetUserActiveOrderById(Guid userId, int orderId)
+        {
+            return Ok(await _userService.GetUserActiveOrderById(userId, orderId));
+        }
+
     }
 }

@@ -34,5 +34,7 @@
 
         public const string InvalidOrderId = "Order ID is invalid";
         public const string InvalidOrderStatus = "Order status is invalid";
+        public const string NoOrderPlaced = "No order has been placed yet";
+        public const string OrderNotFound = "Order not found";
     }
 }

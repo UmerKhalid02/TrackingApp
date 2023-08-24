@@ -23,6 +23,13 @@ namespace TrackingApp.Web.Modules.Orders
         }
 
         [Authorize(Roles = "AD")]
+        [HttpGet("completed-orders")]
+        public async Task<IActionResult> GetAllCompletedOrders([FromQuery] OrderPageParamter request)
+        {
+            return Ok(await _orderService.GetAllCompletedOrders(request));
+        }
+
+        [Authorize(Roles = "AD")]
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetActiveOrderById(int orderId)
         {
