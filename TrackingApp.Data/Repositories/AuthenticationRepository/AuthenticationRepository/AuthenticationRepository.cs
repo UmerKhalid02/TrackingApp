@@ -25,7 +25,7 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
         }
         public async Task<LoginResponseDTO> Authenticate(LoginModel model)
         {
-            var user = await context.User.FirstOrDefaultAsync(x => (x.ContactNo == model.ContactNo || x.UserName == model.ContactNo) && x.IsActive == true && x.DeletedAt == null);
+            var user = await context.User.FirstOrDefaultAsync(x => x.UserName == model.UserName && x.IsActive == true && x.DeletedAt == null);
 
             if (user == null) {
                 return null;

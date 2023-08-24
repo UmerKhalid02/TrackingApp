@@ -21,7 +21,7 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
         {
             LoginModel model = new()
             {
-                ContactNo = userDto.ContactNo,
+                UserName = userDto.UserName,
                 Password = userDto.Password
             };
             return Ok(await service.AuthenticateService(model));
