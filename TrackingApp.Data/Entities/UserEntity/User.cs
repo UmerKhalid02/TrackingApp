@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TrackingApp.Data.Entities.OrderEntity;
 
 namespace TrackingApp.Data.Entities.UserEntity
 {
@@ -20,5 +21,6 @@ namespace TrackingApp.Data.Entities.UserEntity
         public string? State { get; set; }
         public string? Country { get; set; }
         public virtual UserRole UserRole { get; set;}
+        public virtual List<Order> Orders { get; set; }
     }
 }
