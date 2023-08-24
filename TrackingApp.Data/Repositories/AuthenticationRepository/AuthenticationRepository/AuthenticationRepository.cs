@@ -66,8 +66,7 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
                 Subject = new ClaimsIdentity(new Claim[]
                  {
                     new Claim(ClaimsConstants.UserId, user.UserId.ToString()),
-                    new Claim(ClaimsConstants.Email,user.Email),
-                    new Claim(ClaimsConstants.ContactNo,user.ContactNo),
+                    new Claim(ClaimsConstants.UserName,user.UserName),
                     new Claim(ClaimTypes.Role,roleName),
                     new Claim(ClaimsConstants.ProjectScope,ClaimsConstants.ProjectScopeValue),
                  }),
