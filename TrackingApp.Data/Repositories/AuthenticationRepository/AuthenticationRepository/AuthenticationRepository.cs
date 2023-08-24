@@ -7,12 +7,9 @@ using System.Text;
 using TrackingApp.Application.Constants;
 using TrackingApp.Application.DataTransferObjects.AuthenticationDTO.Authentication;
 using TrackingApp.Application.DataTransferObjects.Shared;
-using TrackingApp.Application.Enums;
 using TrackingApp.Application.Exceptions;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IAuthenticationRepository.IAuthenticationRepository;
-using BC = BCrypt.Net.BCrypt;
-using FluentValidation.Results;
 
 namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationRepository
 {
@@ -25,14 +22,10 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
         }
         public async Task<LoginResponseDTO> Authenticate(LoginModel model)
         {
-            var user = await context.User.FirstOrDefaultAsync(x => x.UserName == model.UserName && x.IsActive == true && x.DeletedAt == null);
+            var user = await context.User.FirstOrDefaultAsync(x => x.UserName == model.UserName && x.Password == model.Password && x.IsActive == true && x.DeletedAt == null);
 
             if (user == null) {
                 return null;
-            }
-
-            if (!BC.Verify(model.Password, user.Password)) {
-                throw new UnauthorizedAccessException(GeneralMessages.UserLoggedInFailPassword);
             }
 
             var userRole = context.UserRole.Include(x => x.Role).FirstOrDefault(x => x.UserId == user.UserId && x.IsActive == true && x.DeletedAt == null);

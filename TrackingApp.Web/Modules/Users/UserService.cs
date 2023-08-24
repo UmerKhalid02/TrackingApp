@@ -10,7 +10,6 @@ using TrackingApp.Application.Wrappers;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IOrderRepository;
 using TrackingApp.Data.IRepositories.IUserRepository;
-using BC = BCrypt.Net.BCrypt;
 
 namespace TrackingApp.Web.Modules.Users
 {
@@ -112,10 +111,6 @@ namespace TrackingApp.Web.Modules.Users
                 IsActive = true
             };
 
-            // encrypt password
-            string salt = BC.GenerateSalt();
-            newUser.Password = BC.HashPassword(newUser.Password, salt);
-
             await _userRepository.AddUser(newUser);
             await _userRepository.SaveChanges();
 
@@ -159,10 +154,6 @@ namespace TrackingApp.Web.Modules.Users
             var updatedUser = _mapper.Map(request, user);
             updatedUser.UpdatedAt = DateTime.Now;
             
-            // encrypt password
-            string salt = BC.GenerateSalt();
-            updatedUser.Password = BC.HashPassword(updatedUser.Password, salt);
-
             await _userRepository.SaveChanges();
 
             var resposne = _mapper.Map<UserResponseDTO>(updatedUser);

@@ -13,10 +13,9 @@ namespace TrackingApp.Data.Seeders
                 new User
                 {
                     UserId = Guid.Parse("EF12EE01-ADCF-4A8A-8544-03A592D9E252"),
+                    Name = "Admin",
                     UserName = "admin",
-                    Password = "$2a$12$SHURSR0Suafcx5bKkUePQO7ka7IQ3wfBQkrH.xtnrRY8mnu9bgMb6", //admin1234
-                    ContactNo = "00000000000",
-                    Email = "admin@admin.com",
+                    Password = "admin1234", //admin1234
                     IsActive = true,
                     CreatedAt = DateTime.Parse("2023-08-01"),
                 });

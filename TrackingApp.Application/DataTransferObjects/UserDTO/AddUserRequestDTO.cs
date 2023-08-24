@@ -9,6 +9,11 @@ namespace TrackingApp.Application.DataTransferObjects.UserDTO
 {
     public class AddUserRequestDTO
     {
+        [Required(ErrorMessage = "Name is Required")]
+        [RegularExpression("^[a-zA-Z]{3,}(?: [a-zA-Z]+){0,}$", ErrorMessage = "Name is not correct.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Name must be atleast 3 chars long")]
+        public string? Name { get; set; }
+
         [Required(ErrorMessage = "Username is Required")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be atleast 3 chars long")]
         public string? UserName { get; set; }

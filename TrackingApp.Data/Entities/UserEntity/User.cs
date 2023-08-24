@@ -11,6 +11,8 @@ namespace TrackingApp.Data.Entities.UserEntity
         [Column("UserID")]
         public Guid UserId { get; set; }
         [Required]
+        public string? Name { get; set; }
+        [Required]
         public string? UserName { get; set; }
         [Required]
         public string? Password { get; set; }
@@ -20,6 +22,7 @@ namespace TrackingApp.Data.Entities.UserEntity
         public string? City { get; set; }
         public string? State { get; set; }
         public string? Country { get; set; }
+        public string? ProfilePicPath { get; set; }
         public virtual UserRole UserRole { get; set;}
         public virtual List<Order> Orders { get; set; }
     }
