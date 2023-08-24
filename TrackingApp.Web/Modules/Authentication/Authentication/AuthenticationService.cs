@@ -39,7 +39,7 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
                 RefreshToken = result.RefreshToken
             };
 
-            AddAuthenticationCookies(refreshTokenRequestModel, DateTime.UtcNow.AddDays(20));
+            AddAuthenticationCookies(refreshTokenRequestModel, DateTime.UtcNow.AddHours(20));
             _nlogTrack.LogAccess("Logged In Successfull");
             return new Response<LoginResponseDTO>(true, result, GeneralMessages.UserLoggedInSuccessMessage);
 

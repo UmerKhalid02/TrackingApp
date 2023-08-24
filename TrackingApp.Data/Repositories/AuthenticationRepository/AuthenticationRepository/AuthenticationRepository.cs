@@ -38,7 +38,7 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
             var userRole = context.UserRole.Include(x => x.Role).FirstOrDefault(x => x.UserId == user.UserId && x.IsActive == true && x.DeletedAt == null);
             var newRefreshToken = GenerateRefreshToken();
 
-            var tokenDescriptor = GetTokenDescriptor(user, userRole.Role.RoleName, DateTime.UtcNow.AddDays(20));
+            var tokenDescriptor = GetTokenDescriptor(user, userRole.Role.RoleName, DateTime.UtcNow.AddHours(20));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
