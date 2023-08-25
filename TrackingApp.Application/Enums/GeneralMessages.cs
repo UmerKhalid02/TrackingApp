@@ -19,6 +19,9 @@
         public const string UserWithUsernameExists = "User with this username already exists";
         public const string UserWithEmailExists = "User with this email already exists";
         public const string InvalidUserName = "User with this username does not exist";
+        public const string ProfilePicUploaded = "Profile picture has been uploaded successfully";
+        public const string ProfilePicError = "Something went wrong while uploading picture";
+        public const string InvalidFile = "Invalid File";
 
         public const string InvalidCredentials = "Invalid Credentials";
         public const string TokenIssue = "Something went wrong with token...";

@@ -26,6 +26,10 @@ namespace TrackingApp.Web
             services.AddControllers();
             services.AddSwaggerGen();
 
+            // This is Settings for AWS S3
+            var S3SettingsSection = Configuration.GetSection("AWSS3");
+            services.Configure<AWSS3Model>(S3SettingsSection);
+            var S3Settings = S3SettingsSection.Get<AWSS3Model>();
 
             //This is Settings for the JWT Secret Key
             var appSettingsSection = Configuration.GetSection("AppSettings");

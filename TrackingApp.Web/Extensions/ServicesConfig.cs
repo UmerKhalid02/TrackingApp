@@ -26,6 +26,8 @@ namespace TrackingApp.Web.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderRepository, OrderRepository>();
 
+            services.AddScoped<AWS>();
+
             return services;
         }
     }

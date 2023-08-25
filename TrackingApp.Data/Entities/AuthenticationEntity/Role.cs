@@ -7,6 +7,7 @@ namespace TrackingApp.Data.Entities.AuthenticationEntity
     public class Role : BaseEntity
     {
         [Key]
+        [Column("RoleID")]
         public Guid RoleId { get; set; }
 
         [Required]

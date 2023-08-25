@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Parameters;
 using TrackingApp.Web.Modules.Common;
@@ -66,5 +67,11 @@ namespace TrackingApp.Web.Modules.Users
             return Ok(await _userService.GetUserActiveOrderById(userId, orderId));
         }
 
+        [Authorize(Roles = "AD, US")]
+        [HttpPost("{userId}/upload-picture")]
+        public async Task<IActionResult> UploadProfilePicture(Guid userId, [FromForm] FileUploadRequestDTO profilePic)
+        {
+            return Ok(await _userService.UploadProfilePicture(userId, profilePic));
+        }
     }
 }

@@ -5,11 +5,13 @@ using TrackingApp.Application.DataTransferObjects.UserDTO;
 using TrackingApp.Application.Enums;
 using TrackingApp.Application.Exceptions;
 using TrackingApp.Application.Extensions;
+using TrackingApp.Application.Helpers;
 using TrackingApp.Application.Parameters;
 using TrackingApp.Application.Wrappers;
 using TrackingApp.Data.Entities.UserEntity;
 using TrackingApp.Data.IRepositories.IOrderRepository;
 using TrackingApp.Data.IRepositories.IUserRepository;
+using TrackingApp.Web.Extensions;
 
 namespace TrackingApp.Web.Modules.Users
 {
@@ -18,11 +20,13 @@ namespace TrackingApp.Web.Modules.Users
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IOrderRepository _orderRepository;
-        public UserService(IMapper mapper, IUserRepository userRepository, IOrderRepository orderRepository)
+        private readonly AWS awsservice;
+        public UserService(IMapper mapper, IUserRepository userRepository, IOrderRepository orderRepository, AWS aws)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _orderRepository = orderRepository;
+            awsservice = aws;
         }
 
         public async Task<Response<PaginationResponseModel>> GetAllUsers(UserPageParamter request)
@@ -206,6 +210,34 @@ namespace TrackingApp.Web.Modules.Users
 
             var response = _mapper.Map<OrderResponseDTO>(order);
             return new Response<OrderResponseDTO>(true, response, GeneralMessages.RecordFetched);
+        }
+
+        public async Task<Response<bool>> UploadProfilePicture(Guid userId, FileUploadRequestDTO profilePic)
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+                throw new KeyNotFoundException(GeneralMessages.UserNotFound);
+
+            var file = profilePic.File;
+            if (file != null && file.Length > 0)
+            {
+                string fileName = file.FileName;
+                string timestamp = DateTime.Now.ToFileTime().ToString();
+                string fileKey = timestamp + fileName;
+
+                byte[] bytes = CommonHelper.ConvertToByteArray(file);
+                if (bytes.Length > 0)
+                {
+                    await awsservice.UploadImage(bytes, fileKey);
+                    user.ProfilePicPath = fileKey;
+                    return new Response<bool>(true, true, GeneralMessages.ProfilePicUploaded);
+                }
+                else
+                {
+                    return new Response<bool>(false, false, GeneralMessages.ProfilePicError);
+                }
+            }
+            throw new BadRequestException(GeneralMessages.InvalidFile);
         }
     }
 }

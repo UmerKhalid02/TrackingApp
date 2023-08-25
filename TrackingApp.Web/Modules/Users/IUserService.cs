@@ -15,5 +15,6 @@ namespace TrackingApp.Web.Modules.Users
         Task<Response<bool>> DeleteUser(Guid userId);
         Task<Response<List<OrderResponseDTO>>> GetAllUserActiveOrders(Guid userId);
         Task<Response<OrderResponseDTO>> GetUserActiveOrderById(Guid userId, int orderId);
+        Task<Response<bool>> UploadProfilePicture(Guid userId, FileUploadRequestDTO profilePic);
     }
 }

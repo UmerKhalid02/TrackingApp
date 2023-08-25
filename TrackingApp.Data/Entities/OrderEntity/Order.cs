@@ -9,8 +9,9 @@ namespace TrackingApp.Data.Entities.OrderEntity
     public class Order : BaseEntity
     {
         [Key]
+        [Column("OrderID")]
         public int OrderId { get; set; }
-        
+        [Column("UserID")]
         [ForeignKey("UserId")]
         public Guid? UserId { get; set; }
         public virtual User User { get; set; }
