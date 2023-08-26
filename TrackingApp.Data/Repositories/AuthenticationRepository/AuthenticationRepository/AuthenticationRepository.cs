@@ -70,7 +70,7 @@ namespace TrackingApp.Data.Repositories.AuthenticationRepository.AuthenticationR
                     new Claim(ClaimTypes.Role,roleName),
                     new Claim(ClaimsConstants.ProjectScope,ClaimsConstants.ProjectScopeValue),
                  }),
-                Expires = tokenTime, // expiry time
+                Expires = tokenTime, // expiry time of access token
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
