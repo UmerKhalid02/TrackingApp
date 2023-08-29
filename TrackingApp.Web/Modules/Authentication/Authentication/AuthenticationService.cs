@@ -53,8 +53,8 @@ namespace TrackingApp.Web.Modules.Authentication.Authentication
             CookieOptions option = new()
             {
                 Expires = expiryTime,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Path = "/",
                 HttpOnly = true
             };

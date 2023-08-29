@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using TrackingApp.Application;
 using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Data;
@@ -58,14 +59,22 @@ namespace TrackingApp.Web
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TrackingApp.Web v1"));
             }
+            else
+            { 
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TrackingApp.Web v1"));
+            }
 
             app.UseRouting();
 
             app.UseCors(x => x
-                 .WithOrigins() // provide origins here
-                 .AllowAnyMethod()
-                 .AllowAnyHeader()
-                 .AllowCredentials());
+                .WithOrigins("http://0.0.0.0:80",
+                "http://3.109.132.170:80",
+                "http://192.168.1.6",
+                "http://localhost:80")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
             app.UseMiddleware<AuthorizationMiddleware>();
             app.UseMiddleware<ErrorHandlerMiddleware>();
