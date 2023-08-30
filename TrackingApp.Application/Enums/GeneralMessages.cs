@@ -20,7 +20,7 @@
         public const string UserWithEmailExists = "User with this email already exists";
         public const string InvalidUserName = "User with this username does not exist";
         public const string ProfilePicUploaded = "Profile picture has been uploaded successfully";
-        public const string ProfilePicError = "Something went wrong while uploading picture";
+        public const string ImageError = "Something went wrong while uploading image";
         public const string InvalidFile = "Invalid File";
 
         public const string InvalidCredentials = "Invalid Credentials";
@@ -39,5 +39,7 @@
         public const string InvalidOrderStatus = "Order status is invalid";
         public const string NoOrderPlaced = "No order has been placed yet";
         public const string OrderNotFound = "Order not found";
+        public const string InvalidDates = "Order date must be less than Delivery date";
+        public const string InvalidOrderDate = "Order date cannot be in the past";
     }
 }

@@ -11,6 +11,7 @@ namespace TrackingApp.Data.Entities.OrderEntity
         [Key]
         [Column("OrderID")]
         public int OrderId { get; set; }
+
         [Column("UserID")]
         [ForeignKey("UserId")]
         public Guid? UserId { get; set; }

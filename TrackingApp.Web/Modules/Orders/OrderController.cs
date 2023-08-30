@@ -38,14 +38,14 @@ namespace TrackingApp.Web.Modules.Orders
 
         [Authorize(Roles = "AD")]
         [HttpPost]
-        public async Task<IActionResult> AddOrder([FromBody] AddOrderRequestDTO request)
+        public async Task<IActionResult> AddOrder([FromForm] AddOrderRequestDTO request)
         {
             return Ok(await _orderService.AddOrder(request));
         }
 
         [Authorize(Roles = "AD")]
         [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] UpdateOrderRequestDTO request)
+        public async Task<IActionResult> UpdateOrder(int orderId, [FromForm] UpdateOrderRequestDTO request)
         {
             return Ok(await _orderService.UpdateOrder(orderId, request));
         }

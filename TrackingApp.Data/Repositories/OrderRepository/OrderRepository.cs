@@ -12,12 +12,12 @@ namespace TrackingApp.Data.Repositories.OrderRepository
             _context = context;
         }
 
-        public async Task<List<Order>> GetAllActiveOrders() => 
+        public async Task<List<Order>> GetAllActiveOrders() =>
             await _context.Order.Where(x => x.IsActive == true && x.DeletedAt == null)
             .Include(x => x.User)
             .ToListAsync();
-        
-        public async Task<List<Order>> GetAllCompletedOrders() => 
+
+        public async Task<List<Order>> GetAllCompletedOrders() =>
             await _context.Order.Where(x => x.IsActive == false && x.DeletedAt == null)
             .Include(x => x.User)
             .ToListAsync();
@@ -37,13 +37,25 @@ namespace TrackingApp.Data.Repositories.OrderRepository
             return order;
         }
 
-        public async Task SaveChanges() =>
-            await _context.SaveChangesAsync();
+        /*public async Task SaveChanges() =>
+            await _context.SaveChangesAsync();*/
+
+        public async Task SaveChanges()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
 
         public async Task<List<Order>> GetAllUserActiveOrders(Guid userId) =>
             await _context.Order.Where(x => x.IsActive && x.UserId == userId && x.DeletedAt == null).ToListAsync();
 
-        public async Task<Order> GetUserActiveOrderById(Guid userId, int orderId) => 
+        public async Task<Order> GetUserActiveOrderById(Guid userId, int orderId) =>
             await _context.Order.FirstOrDefaultAsync(x => x.IsActive && x.UserId == userId && x.OrderId == orderId && x.DeletedAt == null);
     }
 }

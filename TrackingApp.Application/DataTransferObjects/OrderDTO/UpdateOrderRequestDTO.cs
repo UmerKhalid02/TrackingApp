@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using TrackingApp.Application.DataTransferObjects.Shared;
+using TrackingApp.Application.Exceptions;
 
 namespace TrackingApp.Application.DataTransferObjects.OrderDTO
 {
@@ -21,5 +24,13 @@ namespace TrackingApp.Application.DataTransferObjects.OrderDTO
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be atleast 1")]
         public int Quantity { get; set; }
         public string? OrderTaker { get; set; }
+
+        [MaxFileSize(5 * 1024 * 1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
+        public IFormFile? OrderImage { get; set; }
+
+        [MaxFileSize(5 * 1024 * 1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
+        public IFormFile? StitchingImage { get; set; }
     }
 }

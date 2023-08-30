@@ -223,7 +223,7 @@ namespace TrackingApp.Web.Modules.Users
             {
                 var isImageDeleted = await awsservice.DeleteImage(user.ProfilePicPath);
                 if(!isImageDeleted)
-                    throw new Exception(GeneralMessages.ProfilePicError);
+                    throw new Exception(GeneralMessages.ImageError);
             }
 
             var file = profilePic.File;
@@ -243,7 +243,7 @@ namespace TrackingApp.Web.Modules.Users
                 }
                 else
                 {
-                    throw new Exception(GeneralMessages.ProfilePicError);
+                    throw new Exception(GeneralMessages.ImageError);
                 }
             }
             throw new BadRequestException(GeneralMessages.InvalidFile);

@@ -4,11 +4,13 @@ using TrackingApp.Application.DataTransferObjects.Shared;
 using TrackingApp.Application.Enums;
 using TrackingApp.Application.Exceptions;
 using TrackingApp.Application.Extensions;
+using TrackingApp.Application.Helpers;
 using TrackingApp.Application.Parameters;
 using TrackingApp.Application.Wrappers;
 using TrackingApp.Data.Entities.OrderEntity;
 using TrackingApp.Data.IRepositories.IOrderRepository;
 using TrackingApp.Data.IRepositories.IUserRepository;
+using TrackingApp.Web.Extensions;
 
 namespace TrackingApp.Web.Modules.Orders
 {
@@ -16,12 +18,14 @@ namespace TrackingApp.Web.Modules.Orders
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
+        private readonly AWS _awsservice;
         private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository, IUserRepository userService, IMapper mapper)
+        public OrderService(IOrderRepository orderRepository, IUserRepository userService, AWS aws, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _userRepository = userService;
+            _awsservice = aws;
             _mapper = mapper;
         }
 
@@ -34,7 +38,7 @@ namespace TrackingApp.Web.Modules.Orders
             {
                 query = query.Where(a => a.OrderName.ToLower().Contains(request.OrderName.ToLower()));
             }
-            
+
             if (request.Quantity != null && request.Quantity != 0)
             {
                 query = query.Where(a => a.Quantity == request.Quantity);
@@ -135,7 +139,7 @@ namespace TrackingApp.Web.Modules.Orders
         {
             var order = await _orderRepository.GetActiveOrderById(orderId);
 
-            if(order == null)
+            if (order == null)
                 throw new BadRequestException(GeneralMessages.InvalidOrderId);
 
             var response = _mapper.Map<OrderResponseDTO>(order);
@@ -148,9 +152,27 @@ namespace TrackingApp.Web.Modules.Orders
             if (user == null)
                 throw new BadRequestException(GeneralMessages.InvalidUserName);
 
+            if (request.OrderDate < DateTime.Today)
+                throw new BadRequestException(GeneralMessages.InvalidOrderDate);
+
+            if (request.OrderDate > request.DeliveryDate)
+                throw new BadRequestException(GeneralMessages.InvalidDates);
+
             var order = _mapper.Map<Order>(request);
             order.UserId = user.UserId;
+            order.User = user;
             order.OrderStatus = EOrderStatus.DYING.GetOrderStatusStringValue();
+
+            // store order images
+            if (request.OrderImage != null)
+            {
+                await this.UploadImage(order, request.OrderImage, OrderImageTypes.ORDERIMAGE);
+            }
+            if (request.StitchingImage != null)
+            {
+                await this.UploadImage(order, request.StitchingImage, OrderImageTypes.STITCHINGIMAGE);
+            }
+            
             order.IsActive = true;
             order.CreatedAt = DateTime.UtcNow;
 
@@ -170,13 +192,42 @@ namespace TrackingApp.Web.Modules.Orders
             if (user == null)
                 throw new BadRequestException(GeneralMessages.InvalidUserName);
 
+            if (request.OrderDate < DateTime.Today)
+                throw new BadRequestException(GeneralMessages.InvalidOrderDate);
+
+            if (request.OrderDate > request.DeliveryDate)
+                throw new BadRequestException(GeneralMessages.InvalidDates);
+
             _mapper.Map(request, order);
             order.UserId = user.UserId;
+            order.User = user;
+
+            // store or replace order images
+            if (request.OrderImage != null)
+            {
+                if (string.IsNullOrEmpty(order.OrderImagePath))
+                    await this.UploadImage(order, request.OrderImage, OrderImageTypes.ORDERIMAGE);
+
+                else if (!string.IsNullOrEmpty(order.OrderImagePath) && !order.OrderImagePath.Contains(request.OrderImage.FileName))
+                {
+                    await _awsservice.DeleteImage(order.OrderImagePath);
+                    await this.UploadImage(order, request.OrderImage, OrderImageTypes.ORDERIMAGE);
+                }
+            }
+            if (request.StitchingImage != null)
+            {
+                if(string.IsNullOrEmpty(order.StitchingImagePath))
+                    await this.UploadImage(order, request.StitchingImage, OrderImageTypes.STITCHINGIMAGE);
+
+                else if (!string.IsNullOrEmpty(order.StitchingImagePath) && !order.StitchingImagePath.Contains(request.StitchingImage.FileName))
+                {
+                    await _awsservice.DeleteImage(order.StitchingImagePath);
+                    await this.UploadImage(order, request.StitchingImage, OrderImageTypes.STITCHINGIMAGE);
+                }
+            }
+
             order.UpdatedAt = DateTime.UtcNow;
-
-            //_orderRepository.UpdateOrder(order);
             await _orderRepository.SaveChanges();
-
             var response = _mapper.Map<OrderResponseDTO>(order);
 
             return new Response<OrderResponseDTO>(true, response, GeneralMessages.RecordUpdated);
@@ -188,7 +239,7 @@ namespace TrackingApp.Web.Modules.Orders
             if (order == null)
                 throw new BadRequestException(GeneralMessages.InvalidOrderId);
 
-            if(string.IsNullOrEmpty(status) || EOrderStatusExtensions.OrderStatusIsInvalid(status))
+            if (string.IsNullOrEmpty(status) || EOrderStatusExtensions.OrderStatusIsInvalid(status))
                 throw new BadRequestException(GeneralMessages.InvalidOrderStatus);
 
             order.OrderStatus = status.ToUpper();
@@ -214,6 +265,35 @@ namespace TrackingApp.Web.Modules.Orders
             await _orderRepository.SaveChanges();
 
             return new Response<bool>(true, true, GeneralMessages.RecordDeleted);
+        }
+
+        private async Task<Response<bool>> UploadImage(Order order, IFormFile file, string type)
+        {
+            if (file.Length > 0)
+            { 
+                string fileName = file.FileName;
+                string timestamp = DateTime.Now.ToFileTime().ToString();
+                string fileKey = timestamp + fileName;
+
+                byte[] bytes = CommonHelper.ConvertToByteArray(file);
+                if (bytes.Length > 0)
+                {
+                    await _awsservice.UploadImage(bytes, fileKey);
+
+                    if (type.Equals(OrderImageTypes.ORDERIMAGE)) {
+                        order.OrderImagePath = fileKey;
+                    }
+                    else {
+                        order.StitchingImagePath = fileKey;
+                    }
+                    return new Response<bool>(true, true, GeneralMessages.ProfilePicUploaded);
+                }
+                else
+                {
+                    throw new Exception(GeneralMessages.ImageError);
+                }
+            }
+            throw new BadRequestException(GeneralMessages.InvalidFile);
         }
     }
 }

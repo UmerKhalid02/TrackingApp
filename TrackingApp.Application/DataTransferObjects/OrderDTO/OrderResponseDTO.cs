@@ -12,6 +12,8 @@
         public string? OrderStatus { get; set; }
         public int? Quantity { get; set; }
         public string? OrderTaker { get; set; }
+        public string? OrderImagePath { get; set; }
+        public string? StitchingImagePath { get; set; }
         public Customer Customer { get; set; }
     }
 
