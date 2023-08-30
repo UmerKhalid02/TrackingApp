@@ -8,7 +8,7 @@ namespace TrackingApp.Application.DataTransferObjects.Shared
     {
         [Required]
         [MaxFileSize(5 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
         public IFormFile? File { get; set; }
     }
 }

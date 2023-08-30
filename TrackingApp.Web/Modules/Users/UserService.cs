@@ -218,6 +218,14 @@ namespace TrackingApp.Web.Modules.Users
             if (user == null)
                 throw new KeyNotFoundException(GeneralMessages.UserNotFound);
 
+            // Check if profile pic already exists, then remove it first
+            if(!string.IsNullOrEmpty(user.ProfilePicPath))
+            {
+                var isImageDeleted = await awsservice.DeleteImage(user.ProfilePicPath);
+                if(!isImageDeleted)
+                    throw new Exception(GeneralMessages.ProfilePicError);
+            }
+
             var file = profilePic.File;
             if (file != null && file.Length > 0)
             {
@@ -230,11 +238,12 @@ namespace TrackingApp.Web.Modules.Users
                 {
                     await awsservice.UploadImage(bytes, fileKey);
                     user.ProfilePicPath = fileKey;
+                    await _userRepository.SaveChanges();
                     return new Response<bool>(true, true, GeneralMessages.ProfilePicUploaded);
                 }
                 else
                 {
-                    return new Response<bool>(false, false, GeneralMessages.ProfilePicError);
+                    throw new Exception(GeneralMessages.ProfilePicError);
                 }
             }
             throw new BadRequestException(GeneralMessages.InvalidFile);
